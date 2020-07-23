@@ -6,7 +6,7 @@ async function resetDBScript() {
   // eslint-disable-next-line no-console
   console.log("[!] Reset DB ...");
   try {
-    await connectDB();
+    await connectDB(process.env.DB_TYPE);
     await resetDB();
     await seedDBFirstTime();
     await closeDB();

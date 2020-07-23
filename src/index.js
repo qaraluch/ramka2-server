@@ -5,7 +5,7 @@ require("dotenv").config();
 
 async function startAppServer() {
   try {
-    await connectDB();
+    await connectDB(process.env.DB_TYPE);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);

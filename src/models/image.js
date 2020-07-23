@@ -2,13 +2,32 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 var ImageSchema = new Schema({
-  imageName: {
+  imageUploadTimeStamp: {
     type: String,
-    default: "none",
     required: true,
   },
-  imagePath: {
+  imageUploadTimeStampISO: {
     type: String,
+    required: true,
+  },
+  imageOriginalName: {
+    type: String,
+    required: true,
+  },
+  imageFileName: {
+    type: String,
+    required: true,
+  },
+  imageServerPath: {
+    type: String,
+    required: true,
+  },
+  imageMimeType: {
+    type: String,
+    required: true,
+  },
+  imageSize: {
+    type: Number,
     required: true,
   },
 });

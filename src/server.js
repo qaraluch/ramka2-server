@@ -27,9 +27,9 @@ app.get("/", (_, res) => {
   });
 });
 
-app.use("/api/v1/session", routes.session);
-app.use("/api/v1/users", routes.users);
-app.use("/api/v1/images", routes.images);
+app.use("/session", routes.session);
+app.use("/users", routes.users);
+app.use("/images", routes.images);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
