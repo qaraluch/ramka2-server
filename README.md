@@ -2,6 +2,61 @@
 
 ## API documetation
 
+### Get all image info form DB
+
+**Method** : `GET`
+
+**URL** : `/images`
+
+**Code** : `200 OK`
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "5f1ad600eb2d67505e03162e"
+    },
+    {},
+    {}
+  ]
+}
+```
+
+### Get image info form DB by passing image \_id as request parameter
+
+**Method** : `GET`
+
+**URL** : `/images/5f1ad600eb2d67505e03162e`
+
+**Code** : `200 OK`
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "5f1ad600eb2d67505e03162e"
+    }
+  ]
+}
+```
+
+### Get not found message when passing wrong image \_id as request parameter
+
+**Method** : `GET`
+
+**URL** : `/images/666`
+
+**Code** : `200 OK`
+
+```json
+{
+  "success": false,
+  "message": "Not found in the DB image with _id: 666"
+}
+```
+
 ### Upload multiple images on the server
 
 **Method** : `POST`
@@ -13,7 +68,7 @@
 example response:
 
 ```json
-[
+{
   "success": true,
   "data": [
     {
@@ -28,7 +83,7 @@ example response:
       "__v": 0
     }
   ]
-]
+}
 ```
 
 ## Setup

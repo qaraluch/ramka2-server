@@ -68,4 +68,28 @@ function multiCreateDBRecords(req, next) {
   );
 }
 
+router.get("/", async (req, res, next) => {
+  const imagesInfo = await req.context.models.Image.find().catch((error) => {
+    error.statusCode = 400;
+    next(error);
+  });
+  return res.send({ success: true, data: imagesInfo });
+});
+
+router.get("/:imageId", async (req, res, next) => {
+  const imageId = req.params.imageId;
+  const imageInfo = await req.context.models.Image.findById(imageId).catch(
+    (error) => {
+      error.statusCode = 400;
+      next(error);
+    }
+  );
+  if (!imageInfo)
+    return res.send({
+      success: false,
+      message: `Not found in the DB image with _id: ${imageId}`,
+    });
+  return res.send({ success: true, data: [imageInfo] });
+});
+
 module.exports = router;
