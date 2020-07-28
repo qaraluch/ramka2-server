@@ -1,5 +1,24 @@
 # Ramka v2 Express API Server
 
+Features:
+
+- upload files to the server
+- create thumbnail
+- read exif data
+- calculate md5 hash of the files
+- parse CS filename
+
+Stack and tooling:
+
+- express.js
+- mongoDB & mongoose
+- eslint
+- prettier
+- jest & supertest
+- multer
+- dotenv
+- nodemon
+
 ## API documetation
 
 ### Get all image info form DB

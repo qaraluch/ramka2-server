@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const multer = require("multer");
-const { getDate } = require("../utils/time");
 const { v4: uuid } = require("uuid");
+const middlewares = require("../middlewares");
 
 //TODO: move to providers section in the future?
 
@@ -38,27 +38,59 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-router.post("/", upload.array("imageUpload"), async (req, res, next) => {
-  const dbRecords = await multiCreateDBRecords(req, next);
-  return res.status(200).json({
-    success: true,
-    data: dbRecords,
-  });
-});
+router.post(
+  "/",
+  upload.array("imageUpload"),
+  middlewares.cropSquareThumbnailImage,
+  middlewares.getExifData,
+  middlewares.getHash,
+  middlewares.parseCSFilename,
+  async (req, res, next) => {
+    const dbRecords = await multiCreateDBRecords(req, next);
+    return res.status(200).json({
+      success: true,
+      data: dbRecords,
+    });
+  }
+);
 
 function multiCreateDBRecords(req, next) {
   return Promise.all(
     req.files.map(async (file) => {
-      const currentDate = new Date();
-      const currentDateMs = currentDate.getTime();
       const dbRecord = await req.context.models.Image.create({
-        imageUploadTimeStamp: currentDateMs,
-        imageUploadTimeStampISO: getDate(currentDateMs),
-        imageOriginalName: file && file.originalname,
-        imageFileName: file && file.filename,
-        imageServerPath: file && file.path,
-        imageMimeType: file && file.mimetype,
-        imageSize: file && file.size,
+        imageOriginalName: file.originalname,
+        imageFileName: file.filename,
+        imageServerPath: file.path,
+        imageMimeType: file.mimetype,
+        imageSize: file.size,
+        imageExif: {
+          exifResults: {
+            success: file.exifData.success,
+            message: file.exifData.message,
+          },
+          data: file.exifData.data,
+        },
+        thumbnail: {
+          cropResults: {
+            success: file.thumbnailCropResults.success,
+            message: file.thumbnailCropResults.message,
+          },
+          path: file.thumbnailCropResults.path,
+        },
+        imageHash: {
+          hashResults: {
+            success: file.imageHash.success,
+            message: file.imageHash.message,
+          },
+          data: file.imageHash.data,
+        },
+        parsedCSFilename: {
+          parseResults: {
+            success: file.parsedCSFilename.success,
+            message: file.parsedCSFilename.message,
+          },
+          data: file.parsedCSFilename.data,
+        },
       }).catch((error) => {
         error.statusCode = 400;
         next(error);
