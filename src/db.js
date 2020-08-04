@@ -34,8 +34,10 @@ const connectDBAtlas = () => {
 const connectDBLocal = () => {
   try {
     return mongoose.connect(process.env.DB_LOCAL_URI, {
+      useFindAndModify: false,
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     });
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -45,10 +47,15 @@ const connectDBLocal = () => {
 
 async function seedDBFirstTime() {
   try {
-    const userZero = new models.User({
+    const userAnon = new models.User({
       username: "anonymous",
     });
-    await userZero.save();
+    await userAnon.save();
+
+    const collectionAll = new models.Collection({
+      name: "all",
+    });
+    await collectionAll.save();
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
@@ -61,6 +68,7 @@ async function resetDB() {
       models.User.deleteMany({}),
       models.Image.deleteMany({}),
       models.Upload.deleteMany({}),
+      models.Collection.deleteMany({}),
     ]);
   } catch (error) {
     // eslint-disable-next-line no-console

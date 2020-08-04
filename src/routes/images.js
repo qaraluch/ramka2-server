@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const multer = require("multer");
 const { v4: uuid } = require("uuid");
+const { getDate } = require("../utils/time");
 const middlewares = require("../middlewares");
 
 //TODO: move to providers section in the future?
@@ -54,6 +55,15 @@ router.post(
       error.statusCode = 400;
       next(error);
     });
+    await req.context.models.Collection.updateOne(
+      { name: "all" },
+      {
+        $push: { images: { $each: imageIds, $position: 0 } }, // newest at the beginning
+      }
+    ).catch((error) => {
+      error.statusCode = 400;
+      next(error);
+    });
     return res.status(200).json({
       success: true,
       data: [dbImageRecords, dbUploadRecord],
@@ -64,7 +74,11 @@ router.post(
 function multiCreateDBImageRecords(req, next) {
   return Promise.all(
     req.files.map(async (file) => {
+      const currentDate = new Date();
+      const currentDateMs = currentDate.getTime();
       const dbImagesRecords = await req.context.models.Image.create({
+        imageUploadTimestamp: currentDateMs,
+        imageUploadTimestampISO: getDate(currentDateMs),
         imageOriginalName: file.originalname,
         imageFileName: file.filename,
         imageServerPath: file.path,
@@ -117,17 +131,22 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:imageId", async (req, res, next) => {
   const imageId = req.params.imageId;
+  const unsuccessfulResponse = {
+    success: false,
+    message: `Not found in the DB image with _id: ${imageId}`,
+  };
   const imageInfo = await req.context.models.Image.findById(imageId).catch(
+    // deal with mongoose internal error
+    // when pass wrong id format it is id casting error
+    /* eslint-disable no-unused-vars */
     (error) => {
-      error.statusCode = 400;
-      next(error);
+      // swallow the error
+      return;
     }
   );
-  if (!imageInfo)
-    return res.send({
-      success: false,
-      message: `Not found in the DB image with _id: ${imageId}`,
-    });
+  // deal with situation when format of id is correct
+  // and not found record ind DB
+  if (!imageInfo) return res.send(unsuccessfulResponse);
   return res.send({ success: true, data: [imageInfo] });
 });
 

@@ -3,6 +3,14 @@ const Schema = mongoose.Schema;
 
 var schema = new Schema(
   {
+    imageUploadTimestamp: {
+      type: String,
+      required: true,
+    },
+    imageUploadTimestampISO: {
+      type: String,
+      required: true,
+    },
     imageOriginalName: {
       type: String,
       required: true,

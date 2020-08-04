@@ -23,6 +23,7 @@ beforeAll(async () => {
 afterAll(async () => {
   try {
     await closeDB();
+    //TODO: refactor: in prod can not rm it. use different dir instead?
     await rimraf("./public/*");
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -70,6 +71,8 @@ describe(":: endpoint /images", () => {
         // dbImageRecords
         expect.arrayContaining([
           expect.objectContaining({
+            imageUploadTimestamp: expect.any(String),
+            imageUploadTimestampISO: expect.any(String),
             imageOriginalName: imgName[0],
             imageFileName: expect.any(String),
             imageServerPath: expect.stringMatching(/^public/),
@@ -132,6 +135,7 @@ describe(":: endpoint /images", () => {
     expect(statsIsFileArr).toEqual([true, true]);
   });
 
+  //TODO: to remove in favour of /collections endpoint ? (think of it)
   it("should successfully GET all records of image info", async () => {
     const res = await supertest(app)
       .get("/images")
@@ -209,7 +213,7 @@ describe(":: endpoint /images", () => {
     );
   });
 
-  it("should get not found message when passing wrong image _id as request parameter (GET request)", async () => {
+  it("should get not found message when passing wrong image _id as request parameter (id wrong format)(GET request)", async () => {
     const res = await supertest(app)
       .get("/images/123")
       .expect("Content-Type", /json/)
@@ -218,6 +222,75 @@ describe(":: endpoint /images", () => {
       expect.objectContaining({
         success: false,
         message: expect.stringMatching("Not found in the DB image with _id:"),
+      })
+    );
+  });
+
+  it("should get not found message when passing wrong image _id as request parameter (id not exists)(GET request)", async () => {
+    const res = await supertest(app)
+      .get("/images/11119879a7c1ce5e9862a639")
+      .expect("Content-Type", /json/)
+      .expect(200);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        message: expect.stringMatching("Not found in the DB image with _id:"),
+      })
+    );
+  });
+});
+
+describe(":: endpoint /collections", () => {
+  it("should successfully GET all records of 'all' collection (in order whitin upload sessions)", async () => {
+    const res = await supertest(app)
+      .get("/collections/all")
+      .expect("Content-Type", /json/)
+      .expect(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.name).toBe("all");
+    expect(res.body.data.images.length).toBe(4);
+
+    const imageInfo = await Promise.all(
+      res.body.data.images.map(async (id) => {
+        const res = await supertest(app)
+          .get(`/images/${id}`)
+          .expect("Content-Type", /json/)
+          .expect(200);
+        return res.body;
+      })
+    );
+    const getTimestamp = (itm) => parseInt(itm.data[0].imageUploadTimestamp);
+    const timestamps = imageInfo.map(getTimestamp);
+    const [img1ts, img2ts, img3ts, img4ts] = timestamps;
+
+    // At this point of this test sequence we have 2 uploads already
+    // older upload  (1 image) should be with image that timestamp is the oldest
+    // newest upload (3 images) should be with all images that timestamp is newer than image in old upload
+    // so:
+    // [
+    //  image1: older than image1 and image2 but not than image4
+    //  image2: newer than image1
+    //  image3: newer than image2
+    //  image4: older than then all above
+    // ]
+    // this is correct order of timestamps:
+    // timestamps ----> [ '1596624770214', '1596624770215', '1596624770216', '1596624769241' ]
+    expect(img1ts).toBeLessThanOrEqual(img2ts); // in rare cases it can be equal (the same upload session)
+    expect(img1ts).toBeLessThan(img3ts);
+    expect(img1ts).toBeGreaterThan(img4ts);
+  });
+
+  it("should get not found message when passing wrong collection name as request parameter (GET request)", async () => {
+    const res = await supertest(app)
+      .get("/collections/pierogi")
+      .expect("Content-Type", /json/)
+      .expect(200);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        message: expect.stringMatching(
+          "Not found in the DB collection with name:"
+        ),
       })
     );
   });

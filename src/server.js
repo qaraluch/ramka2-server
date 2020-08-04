@@ -30,6 +30,7 @@ app.get("/", (_, res) => {
 app.use("/session", routes.session);
 app.use("/users", routes.users);
 app.use("/images", routes.images);
+app.use("/collections", routes.collections);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

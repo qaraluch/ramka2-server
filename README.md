@@ -21,6 +21,41 @@ Stack and tooling:
 
 ## API documetation
 
+### Get collections by name
+
+**Method** : `GET`
+
+**URL** : `/collections/:collectionName`
+
+Default collection name: `all`.
+
+**Code** : `200 OK`
+
+```json
+{
+  "success": true,
+  "data": {
+    "images": [
+      "5f2a634e589dd26ca7e78952",
+      "5f2a634e589dd26ca7e78953",
+      "5f2a634e589dd26ca7e78954",
+      "5f2a634d589dd26ca7e78950"
+    ],
+    "_id": "5f2a634c589dd26ca7e7894f",
+    "name": "all"
+  }
+}
+```
+
+In case wrong collection name you get response as follow:
+
+```json
+{
+  "success": false,
+  "message": "Not found in the DB collection with name: pierogi"
+}
+```
+
 ### Get all image info form DB
 
 **Method** : `GET`
@@ -46,7 +81,7 @@ Stack and tooling:
 
 **Method** : `GET`
 
-**URL** : `/images/5f1ad600eb2d67505e03162e`
+**URL** : `/images/:imageId`
 
 **Code** : `200 OK`
 
@@ -61,13 +96,7 @@ Stack and tooling:
 }
 ```
 
-### Get not found message when passing wrong image \_id as request parameter
-
-**Method** : `GET`
-
-**URL** : `/images/666`
-
-**Code** : `200 OK`
+In case wrong id you get response as follow:
 
 ```json
 {
