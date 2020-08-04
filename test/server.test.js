@@ -64,14 +64,21 @@ describe(":: endpoint /images", () => {
   it("should successfully upload an image using POST method", async () => {
     const expectedResponseObj = {
       success: true,
+      // data API: [dbImageRecords, dbUploadRecord],
+      // see: routes/images.js
       data: expect.arrayContaining([
-        expect.objectContaining({
-          imageOriginalName: imgName[0],
-          imageFileName: expect.any(String),
-          imageServerPath: expect.stringMatching(/^public/),
-          imageMimeType: "image/jpeg",
-          imageSize: expect.any(Number),
-        }),
+        // dbImageRecords
+        expect.arrayContaining([
+          expect.objectContaining({
+            imageOriginalName: imgName[0],
+            imageFileName: expect.any(String),
+            imageServerPath: expect.stringMatching(/^public/),
+            imageMimeType: "image/jpeg",
+            imageSize: expect.any(Number),
+          }),
+        ]),
+        // dbUploadRecord
+        expect.objectContaining({ images: expect.any(Array) }),
       ]),
     };
     const res = await supertest(app)
@@ -81,6 +88,7 @@ describe(":: endpoint /images", () => {
       .expect("Content-Type", /json/)
       .expect(200);
     expect(res.body).toEqual(expect.objectContaining(expectedResponseObj));
+    expect(res.body.data[1].images.length).toBe(1); // dbUploadRecord
   });
 
   it("should successfully upload array of images using POST method", async () => {
@@ -93,12 +101,15 @@ describe(":: endpoint /images", () => {
       .expect("Content-Type", /json/)
       .expect(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.length).toBe(3);
+    expect(res.body.data[0].length).toBe(3); // dbImageRecords see: routes/images.js
+    expect(res.body.data[1].images.length).toBe(3); // dbUploadRecord
     expect(res.body.data).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ imageOriginalName: imgName[1] }),
-        expect.objectContaining({ imageOriginalName: imgName[2] }),
-        expect.objectContaining({ imageOriginalName: imgName[3] }),
+        expect.arrayContaining([
+          expect.objectContaining({ imageOriginalName: imgName[1] }),
+          expect.objectContaining({ imageOriginalName: imgName[2] }),
+          expect.objectContaining({ imageOriginalName: imgName[3] }),
+        ]),
       ])
     );
   });

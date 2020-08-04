@@ -46,18 +46,25 @@ router.post(
   middlewares.getHash,
   middlewares.parseCSFilename,
   async (req, res, next) => {
-    const dbRecords = await multiCreateDBRecords(req, next);
+    const dbImageRecords = await multiCreateDBImageRecords(req, next);
+    const imageIds = dbImageRecords.map((itm) => itm.id);
+    const dbUploadRecord = await req.context.models.Upload.create({
+      images: imageIds,
+    }).catch((error) => {
+      error.statusCode = 400;
+      next(error);
+    });
     return res.status(200).json({
       success: true,
-      data: dbRecords,
+      data: [dbImageRecords, dbUploadRecord],
     });
   }
 );
 
-function multiCreateDBRecords(req, next) {
+function multiCreateDBImageRecords(req, next) {
   return Promise.all(
     req.files.map(async (file) => {
-      const dbRecord = await req.context.models.Image.create({
+      const dbImagesRecords = await req.context.models.Image.create({
         imageOriginalName: file.originalname,
         imageFileName: file.filename,
         imageServerPath: file.path,
@@ -95,7 +102,7 @@ function multiCreateDBRecords(req, next) {
         error.statusCode = 400;
         next(error);
       });
-      return dbRecord;
+      return dbImagesRecords;
     })
   );
 }

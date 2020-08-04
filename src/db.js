@@ -60,6 +60,7 @@ async function resetDB() {
     await Promise.all([
       models.User.deleteMany({}),
       models.Image.deleteMany({}),
+      models.Upload.deleteMany({}),
     ]);
   } catch (error) {
     // eslint-disable-next-line no-console
