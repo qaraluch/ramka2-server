@@ -31,10 +31,42 @@ var schema = new Schema(
       type: Number,
       required: true,
     },
-    imageExif: { type: mongoose.Schema.Types.Mixed },
-    thumbnail: { type: mongoose.Schema.Types.Mixed },
-    imageHash: { type: mongoose.Schema.Types.Mixed },
-    parsedCSFilename: { type: mongoose.Schema.Types.Mixed },
+    imageExif: {
+      exifResults: {
+        success: { type: Boolean },
+        message: { type: mongoose.Schema.Types.Mixed },
+      },
+      data: { type: mongoose.Schema.Types.Mixed },
+    },
+    thumbnail: {
+      cropResults: {
+        success: { type: Boolean },
+        message: { type: mongoose.Schema.Types.Mixed },
+      },
+      path: { type: String },
+    },
+    imageHash: {
+      hashResults: {
+        success: { type: Boolean },
+        message: { type: mongoose.Schema.Types.Mixed },
+      },
+      data: { type: String },
+    },
+    parsedCSFilename: {
+      parseResults: {
+        success: { type: Boolean },
+        message: { type: mongoose.Schema.Types.Mixed },
+      },
+      data: {
+        year: { type: String },
+        month: { type: String },
+        day: { type: String },
+        time: { type: String },
+        version: { type: String },
+        comment: { type: String },
+        extension: { type: String },
+      },
+    },
   },
   { timestamp: true }
 );
