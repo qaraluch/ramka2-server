@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "makedirs": "node scripts/makeServerDirs.js",
+    "postimages": "node scripts/postImages.js",
     "resetdb": "node scripts/resetDB.js",
     "start": "node src/index.js",
-    "start-fresh": "npm run makedirs && npm run resetdb && npm run start",
+    "start:fresh": "npm run makedirs && npm run resetdb && npm run start",
     "dev": "NODE_ENV=test nodemon src/index.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest --testTimeout=10000",
     "test:watch": "NODE_ENV=test ./node_modules/.bin/jest --watch --testTimeout=10000",
@@ -29,10 +30,12 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "cors": "^2.8.5",
     "dist-exiftool": "^10.53.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "form-data": "^3.0.0",
     "helmet": "^3.23.3",
     "jimp": "^0.14.0",
     "make-dir": "^3.1.0",
@@ -41,6 +44,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-exiftool": "^2.3.0",
+    "qm-walk": "^2.2.7",
     "rimraf": "^3.0.2",
     "serialize-error": "^7.0.1",
     "uuid": "^8.2.0"
