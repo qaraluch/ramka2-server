@@ -172,12 +172,6 @@ start server with reseted database:
 npm run start:fresh
 ```
 
-make server dirs (for first deploy)
-
-```
-npm run makedirs
-```
-
 import images from local dir to the server
 define source dir and server url end point in .env file as variabe:
 POST_IMAGES_SOURCE=

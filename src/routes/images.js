@@ -3,14 +3,31 @@ const multer = require("multer");
 const { v4: uuid } = require("uuid");
 const { getDate } = require("../utils/time");
 const middlewares = require("../middlewares");
+const makeDirIn = require("../utils/makeDirIn");
 
-//TODO: move to providers section in the future?
+// seems that .env vars are not visible so need to require it agian?
+require("dotenv").config();
 
 const router = Router();
 
+const filesRepo =
+  process.env.NODE_ENV === "test"
+    ? process.env.STORAGE_PATH_TEST
+    : process.env.STORAGE_PATH;
+
+async function createFilesRepoDir() {
+  try {
+    await makeDirIn(filesRepo);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+  }
+}
+createFilesRepoDir();
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/");
+    cb(null, filesRepo);
   },
   filename: function (req, file, cb) {
     const id = uuid();

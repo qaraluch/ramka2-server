@@ -23,8 +23,7 @@ beforeAll(async () => {
 afterAll(async () => {
   try {
     await closeDB();
-    //TODO: refactor: in prod can not rm it. use different dir instead?
-    await rimraf("./public/*");
+    await rimraf(process.env.STORAGE_PATH_TEST);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
