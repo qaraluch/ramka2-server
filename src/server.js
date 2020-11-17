@@ -23,7 +23,7 @@ app.use(middlewares.addContext);
 
 app.get("/", (_, res) => {
   res.json({
-    message: "This is api server for ptoject: Ramka v2",
+    message: "This is api server for project: Ramka v2",
   });
 });
 

@@ -8,46 +8,26 @@ const mongooseOptions = {
   useCreateIndex: true,
 };
 
-function connectDB(type) {
-  if (type === "atlas") {
-    return connectDBAtlas();
-  } else {
-    return connectDBLocal();
-  }
+function returnDBName() {
+  const dbName = process.env.NODE_ENV === "test" ? "ramka2-test" : "ramka2";
+  return dbName;
 }
 
-const connectDBAtlas = () => {
-  try {
-    const protocol = "mongodb+srv://";
-    const user = process.env.DB_ATLAS_USER;
-    const pass = process.env.DB_ATLAS_PASSWORD;
-    const host = process.env.DB_ATLAS_HOST;
-    const dbName =
-      process.env.NODE_ENV === "test"
-        ? process.env.DB_ATLAS_NAME_TEST
-        : process.env.DB_ATLAS__NAME;
-    const args = "?retryWrites=true&w=majority";
-    const fullDbUrl = `${protocol}${user}:${pass}@${host}/${dbName}${args}`;
-    return mongoose.connect(fullDbUrl, mongooseOptions);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-  }
-};
-
-const connectDBLocal = () => {
-  const dbName =
-    process.env.NODE_ENV === "test"
-      ? process.env.DB_LOCAL_NAME_TEST
-      : process.env.DB_LOCAL_NAME;
-  const uriFull = `${process.env.DB_LOCAL_URI}/${dbName}`;
+function connectDB() {
+  // connect to docker's mongo service; see: docker-compose.yml
+  const user = process.env.DB_DOCKER_USER;
+  const pass = process.env.DB_DOCKER_USER_PASS;
+  const host = process.env.DB_DOCKER_HOST;
+  const port = process.env.DB_DOCKER_PORT;
+  const dbName = returnDBName();
+  const uriFull = `mongodb://${user}:${pass}@${host}:${port}/${dbName}`;
   try {
     return mongoose.connect(uriFull, mongooseOptions);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
   }
-};
+}
 
 async function seedDBFirstTime() {
   try {

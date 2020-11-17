@@ -5,7 +5,7 @@ require("dotenv").config();
 
 async function startAppServer() {
   try {
-    await connectDB(process.env.DB_TYPE);
+    await connectDB();
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
@@ -21,10 +21,12 @@ async function startAppServer() {
 startAppServer();
 
 process.on("uncaughtException", (error) => {
+  // eslint-disable-next-line no-console
   console.error(error);
   process.exit(1);
 });
 process.on("unhandledRejection", (error) => {
+  // eslint-disable-next-line no-console
   console.error(error);
   process.exit(1);
 });

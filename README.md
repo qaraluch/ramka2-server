@@ -7,17 +7,19 @@ Features:
 - read exif data
 - calculate md5 hash of the files
 - parse CS filename
+- containerized database
 
 Stack and tooling:
 
 - express.js
-- mongoDB & mongoose
+- mongoDB & mongoose & mongo-express
 - eslint
 - prettier
 - jest & supertest
 - multer
 - dotenv
 - nodemon
+- docker and docker-compose
 
 ## API documetation
 
@@ -148,34 +150,50 @@ npm test
 
 ## Development
 
+Spawn contenerized instance of database:
+
+```
+docker-compose up -d
+```
+
 ```
 npm run dev
 ```
 
-check eslint output:
+Check eslint output:
 
 ```
 npm run lint
 ```
 
+Docker-compose also spawns mongo-express container
+to be able to check out db's records during development process
+(no need of MongoDB Compass app).
+This service is exposed on port: `8081`.
+
 ## Scripts
 
-reset database:
+To reset database:
 
 ```
 npm run resetdb
 ```
 
-start server with reseted database:
+To start server with reseted database:
 
 ```
 npm run start:fresh
 ```
 
-import images from local dir to the server
+Import images from local dir to the server
 define source dir and server url end point in .env file as variabe:
+
+```.env
 POST_IMAGES_SOURCE=
 POST_IMAGES_DESTINATION_URL=
+```
+
+and run command:
 
 ```
 npm run postimages

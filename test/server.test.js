@@ -11,7 +11,7 @@ require("dotenv").config();
 
 beforeAll(async () => {
   try {
-    await connectDB("local");
+    await connectDB();
     await resetDB();
     await seedDBFirstTime();
   } catch (error) {

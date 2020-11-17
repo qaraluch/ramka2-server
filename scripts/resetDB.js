@@ -16,7 +16,7 @@ async function resetDBScript() {
   console.log("[!] Removing files form dir: %s ", process.env.STORAGE_PATH);
   try {
     await rimraf(process.env.STORAGE_PATH);
-    await connectDB(process.env.DB_TYPE);
+    await connectDB();
     await resetDB();
     await seedDBFirstTime();
     await closeDB();
