@@ -26,16 +26,3 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_DOCKER_ROOT}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_DOCKER_ROOT_PASS}
-  server:
-    build: .
-    container_name: "server"
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - mongo
-    ports:
-      - 9000:9000
-    volumes:
-      - ./:/home/node/app
-    command: bash -c "npm run dev"

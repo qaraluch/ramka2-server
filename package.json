@@ -7,7 +7,6 @@
     "postimages": "node scripts/postImages.js",
     "resetdb": "NODE_ENV=dev node scripts/resetDB.js",
     "start": "NODE_ENV=production node src/index.js",
-    "start:fresh": "NODE_ENV=production npm run makedirs && npm run resetdb && npm run start",
     "dev": "NODE_ENV=dev nodemon src/index.js",
     "test": "NODE_ENV=test ./node_modules/.bin/jest --testTimeout=10000",
     "test:watch": "NODE_ENV=test ./node_modules/.bin/jest --watch --testTimeout=10000",
