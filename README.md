@@ -150,17 +150,46 @@ npm test
 
 ## Development
 
-Spawn contenerized instance of database:
+Spawn contenerized instance of the server app:
 
 ```
 docker-compose up -d
 ```
 
+First time server setup:
+
+1. Seed db:
+
 ```
-npm run dev
+docker-compose up -d
+docker-compose exec server bash
+npm run resetdb
+exit
 ```
 
-Check eslint output:
+2. Send example images to the server:
+
+Warn: run below npm command from host shell.
+It uses REST's POST method to send data.
+
+```
+npm run postimages
+```
+
+3. Turn on/off server for development:
+
+```
+docker-compose stop
+docker-compose start
+```
+
+3. Remove app containers entirely:
+
+```
+docker-compose down -v
+```
+
+### Check eslint output:
 
 ```
 npm run lint
