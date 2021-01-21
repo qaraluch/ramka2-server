@@ -54,6 +54,9 @@ async function walkDir(path) {
     const formHeaders = form.getHeaders();
 
     const response = await axios.post(destinationUrl, form, {
+      // unlimited size of image data upload
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       headers: {
         ...formHeaders,
       },
